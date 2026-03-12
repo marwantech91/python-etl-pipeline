@@ -230,6 +230,31 @@ class Load:
         df.to_parquet(path, **kwargs)
 
 
+class Validate:
+    """Data validation utilities."""
+
+    @staticmethod
+    def not_empty(df: pd.DataFrame) -> pd.DataFrame:
+        if df.empty:
+            raise ValueError("DataFrame is empty")
+        return df
+
+    @staticmethod
+    def no_nulls(df: pd.DataFrame, columns: list[str]) -> pd.DataFrame:
+        for col in columns:
+            null_count = df[col].isnull().sum()
+            if null_count > 0:
+                raise ValueError(f"Column '{col}' has {null_count} null values")
+        return df
+
+    @staticmethod
+    def unique(df: pd.DataFrame, columns: list[str]) -> pd.DataFrame:
+        duplicates = df.duplicated(subset=columns)
+        if duplicates.any():
+            raise ValueError(f"Found {duplicates.sum()} duplicate rows on columns {columns}")
+        return df
+
+
 def retry(attempts: int = 3, delay: int = 60):
     """Retry decorator for pipeline stages."""
     def decorator(func: Callable) -> Callable:
