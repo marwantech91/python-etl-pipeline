@@ -272,3 +272,19 @@ def retry(attempts: int = 3, delay: int = 60):
             raise last_error
         return wrapper
     return decorator
+
+
+def row_count(df: pd.DataFrame) -> int:
+    """Return number of rows in a DataFrame."""
+    return len(df)
+
+
+def column_stats(df: pd.DataFrame, column: str) -> dict:
+    """Return basic statistics for a numeric column."""
+    series = df[column]
+    return {
+        "min": series.min(),
+        "max": series.max(),
+        "mean": series.mean(),
+        "null_count": int(series.isnull().sum()),
+    }
