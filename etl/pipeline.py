@@ -286,5 +286,7 @@ def column_stats(df: pd.DataFrame, column: str) -> dict:
         "min": series.min(),
         "max": series.max(),
         "mean": series.mean(),
+        "median": series.median(),
+        "std": series.std(),
         "null_count": int(series.isnull().sum()),
     }
