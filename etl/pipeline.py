@@ -240,6 +240,14 @@ class Validate:
         return df
 
     @staticmethod
+    def column_exists(df: pd.DataFrame, columns: list[str]) -> pd.DataFrame:
+        """Verify that required columns are present in the DataFrame."""
+        missing = [c for c in columns if c not in df.columns]
+        if missing:
+            raise ValueError(f"Missing required columns: {missing}")
+        return df
+
+    @staticmethod
     def no_nulls(df: pd.DataFrame, columns: list[str]) -> pd.DataFrame:
         for col in columns:
             null_count = df[col].isnull().sum()
