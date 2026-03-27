@@ -256,6 +256,16 @@ class Validate:
         return df
 
     @staticmethod
+    def in_range(df: pd.DataFrame, column: str, min_val: float, max_val: float) -> pd.DataFrame:
+        """Validate that all values in a numeric column fall within the expected range."""
+        out_of_range = df[(df[column] < min_val) | (df[column] > max_val)]
+        if not out_of_range.empty:
+            raise ValueError(
+                f"Column '{column}' has {len(out_of_range)} values outside range [{min_val}, {max_val}]"
+            )
+        return df
+
+    @staticmethod
     def unique(df: pd.DataFrame, columns: list[str]) -> pd.DataFrame:
         duplicates = df.duplicated(subset=columns)
         if duplicates.any():
