@@ -308,3 +308,28 @@ def column_stats(df: pd.DataFrame, column: str) -> dict:
         "std": series.std(),
         "null_count": int(series.isnull().sum()),
     }
+
+
+def profile_dataframe(df: pd.DataFrame) -> dict:
+    """Generate a data quality profile for the entire DataFrame."""
+    profile = {
+        "row_count": len(df),
+        "column_count": len(df.columns),
+        "memory_mb": round(df.memory_usage(deep=True).sum() / 1024 / 1024, 2),
+        "columns": {},
+    }
+
+    for col in df.columns:
+        col_info: dict = {
+            "dtype": str(df[col].dtype),
+            "null_count": int(df[col].isnull().sum()),
+            "null_pct": round(df[col].isnull().mean() * 100, 1),
+            "unique_count": int(df[col].nunique()),
+        }
+
+        if pd.api.types.is_numeric_dtype(df[col]):
+            col_info.update(column_stats(df, col))
+
+        profile["columns"][col] = col_info
+
+    return profile
