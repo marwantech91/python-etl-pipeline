@@ -229,6 +229,19 @@ class Load:
         logger.info(f"Loading {len(df)} rows to Parquet: {path}")
         df.to_parquet(path, **kwargs)
 
+    @staticmethod
+    def to_multiple(df: pd.DataFrame, outputs: list[dict]) -> None:
+        """Load data to multiple destinations in sequence."""
+        for output in outputs:
+            fmt = output.pop("format")
+            path = output.pop("path", None)
+            if fmt == "csv" and path:
+                Load.to_csv(df, path, **output)
+            elif fmt == "json" and path:
+                Load.to_json(df, path, **output)
+            elif fmt == "parquet" and path:
+                Load.to_parquet(df, path, **output)
+
 
 class Validate:
     """Data validation utilities."""
